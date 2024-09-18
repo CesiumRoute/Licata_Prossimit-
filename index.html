@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/Licata_1.js"></script>
+        <script src="data/ZonaRaccoltadiprossimit_stampa_2.js"></script>
+        <script src="data/Puntidiprossimit_3.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[37.09712930300066,13.923721414279969],[37.11677448442894,13.964052419027812]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        function pop_Licata_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_RIP'] !== null ? autolinker.link(feature.properties['COD_RIP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_REG'] !== null ? autolinker.link(feature.properties['COD_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_PROV'] !== null ? autolinker.link(feature.properties['COD_PROV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_CM'] !== null ? autolinker.link(feature.properties['COD_CM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COD_UTS'] !== null ? autolinker.link(feature.properties['COD_UTS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PRO_COM'] !== null ? autolinker.link(feature.properties['PRO_COM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PRO_COM_T'] !== null ? autolinker.link(feature.properties['PRO_COM_T'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COMUNE'] !== null ? autolinker.link(feature.properties['COMUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COMUNE_A'] !== null ? autolinker.link(feature.properties['COMUNE_A'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CC_UTS'] !== null ? autolinker.link(feature.properties['CC_UTS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SHAPE_LENG'] !== null ? autolinker.link(feature.properties['SHAPE_LENG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SHAPE_AREA'] !== null ? autolinker.link(feature.properties['SHAPE_AREA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SHAPE_LEN'] !== null ? autolinker.link(feature.properties['SHAPE_LEN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Licata_1_0() {
+            return {
+                pane: 'pane_Licata_1',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Licata_1');
+        map.getPane('pane_Licata_1').style.zIndex = 401;
+        map.getPane('pane_Licata_1').style['mix-blend-mode'] = 'normal';
+        var layer_Licata_1 = new L.geoJson(json_Licata_1, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Licata_1',
+            layerName: 'layer_Licata_1',
+            pane: 'pane_Licata_1',
+            onEachFeature: pop_Licata_1,
+            style: style_Licata_1_0,
+        });
+        bounds_group.addLayer(layer_Licata_1);
+        map.addLayer(layer_Licata_1);
+        function pop_ZonaRaccoltadiprossimit_stampa_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PRO_COM'] !== null ? autolinker.link(feature.properties['PRO_COM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEZ2011'] !== null ? autolinker.link(feature.properties['SEZ2011'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEZ'] !== null ? autolinker.link(feature.properties['SEZ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Pop'] !== null ? autolinker.link(feature.properties['Pop'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Fam'] !== null ? autolinker.link(feature.properties['Fam'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['1 piano'] !== null ? autolinker.link(feature.properties['1 piano'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['2 piano'] !== null ? autolinker.link(feature.properties['2 piano'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3 piano'] !== null ? autolinker.link(feature.properties['3 piano'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['4 piani o'] !== null ? autolinker.link(feature.properties['4 piani o'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['1 int'] !== null ? autolinker.link(feature.properties['1 int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['2 int'] !== null ? autolinker.link(feature.properties['2 int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3-4 int'] !== null ? autolinker.link(feature.properties['3-4 int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['5-8 int'] !== null ? autolinker.link(feature.properties['5-8 int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['9-15 int'] !== null ? autolinker.link(feature.properties['9-15 int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['16+ int'] !== null ? autolinker.link(feature.properties['16+ int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Tot int'] !== null ? autolinker.link(feature.properties['Tot int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Sup'] !== null ? autolinker.link(feature.properties['Sup'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Dens pop'] !== null ? autolinker.link(feature.properties['Dens pop'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Dens int'] !== null ? autolinker.link(feature.properties['Dens int'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Tasso'] !== null ? autolinker.link(feature.properties['Tasso'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['% grossi e'] !== null ? autolinker.link(feature.properties['% grossi e'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Dens pop2'] !== null ? autolinker.link(feature.properties['Dens pop2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Dens int 2'] !== null ? autolinker.link(feature.properties['Dens int 2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Tasso 2'] !== null ? autolinker.link(feature.properties['Tasso 2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['%grand ed'] !== null ? autolinker.link(feature.properties['%grand ed'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['4 piano'] !== null ? autolinker.link(feature.properties['4 piano'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['9-16+inter'] !== null ? autolinker.link(feature.properties['9-16+inter'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['N. Famigli'] !== null ? autolinker.link(feature.properties['N. Famigli'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Zona 1'] !== null ? autolinker.link(feature.properties['Zona 1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ZonaRaccoltadiprossimit_stampa_2_0(feature) {
+            switch(String(feature.properties['Zona 1'])) {
+                case '1':
+                    return {
+                pane: 'pane_ZonaRaccoltadiprossimit_stampa_2',
+                opacity: 1,
+                color: 'rgba(160,161,159,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,208,1,0.47058823529411764)',
+                interactive: false,
+            }
+                    break;
+                case '2':
+                    return {
+                pane: 'pane_ZonaRaccoltadiprossimit_stampa_2',
+                opacity: 1,
+                color: 'rgba(160,161,159,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,1,1,0.47058823529411764)',
+                interactive: false,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_ZonaRaccoltadiprossimit_stampa_2');
+        map.getPane('pane_ZonaRaccoltadiprossimit_stampa_2').style.zIndex = 402;
+        map.getPane('pane_ZonaRaccoltadiprossimit_stampa_2').style['mix-blend-mode'] = 'normal';
+        var layer_ZonaRaccoltadiprossimit_stampa_2 = new L.geoJson(json_ZonaRaccoltadiprossimit_stampa_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_ZonaRaccoltadiprossimit_stampa_2',
+            layerName: 'layer_ZonaRaccoltadiprossimit_stampa_2',
+            pane: 'pane_ZonaRaccoltadiprossimit_stampa_2',
+            onEachFeature: pop_ZonaRaccoltadiprossimit_stampa_2,
+            style: style_ZonaRaccoltadiprossimit_stampa_2_0,
+        });
+        bounds_group.addLayer(layer_ZonaRaccoltadiprossimit_stampa_2);
+        map.addLayer(layer_ZonaRaccoltadiprossimit_stampa_2);
+        function pop_Puntidiprossimit_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['pkuid'] !== null ? autolinker.link(feature.properties['pkuid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Numero</th>\
+                        <td>' + (feature.properties['Numero'] !== null ? autolinker.link(feature.properties['Numero'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">X</th>\
+                        <td>' + (feature.properties['X'] !== null ? autolinker.link(feature.properties['X'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">y</th>\
+                        <td>' + (feature.properties['y'] !== null ? autolinker.link(feature.properties['y'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Puntidiprossimit_3_0() {
+            return {
+                pane: 'pane_Puntidiprossimit_3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: false,
+            }
+        }
+        function style_Puntidiprossimit_3_1() {
+            return {
+                pane: 'pane_Puntidiprossimit_3',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(10,97,204,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Puntidiprossimit_3');
+        map.getPane('pane_Puntidiprossimit_3').style.zIndex = 403;
+        map.getPane('pane_Puntidiprossimit_3').style['mix-blend-mode'] = 'normal';
+        var layer_Puntidiprossimit_3 = new L.geoJson.multiStyle(json_Puntidiprossimit_3, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Puntidiprossimit_3',
+            layerName: 'layer_Puntidiprossimit_3',
+            pane: 'pane_Puntidiprossimit_3',
+            onEachFeature: pop_Puntidiprossimit_3,
+            pointToLayers: [function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Puntidiprossimit_3_0(feature));
+            },function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Puntidiprossimit_3_1(feature));
+            },
+        ]});
+        bounds_group.addLayer(layer_Puntidiprossimit_3);
+        map.addLayer(layer_Puntidiprossimit_3);
+        setBounds();
+        var i = 0;
+        layer_Puntidiprossimit_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Numero'] !== null?String('<div style="color: #ffffff; font-size: 14pt; font-family: \'Bahnschrift\', sans-serif;">' + layer.feature.properties['Numero']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Puntidiprossimit_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_Puntidiprossimit_3]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Puntidiprossimit_3]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Puntidiprossimit_3]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Puntidiprossimit_3]);
+        });
+        </script>
+    </body>
+</html>
